@@ -136,7 +136,7 @@ body {
   }
   
   .sortable::after {
-    content: ' \25B4'; /* Default arrow (up) */
+    content: ''; /* No arrow by default */
     font-size: 0.8em;
     margin-left: 5px;
     visibility: hidden;

@@ -171,6 +171,13 @@ document.querySelectorAll('.sortable').forEach(header => {
   header.addEventListener('click', () => {
     const currentOrder = header.getAttribute('data-sort-order');
     const newOrder = currentOrder === 'asc' ? 'desc' : 'asc';
+
+    // Clear sort order from all headers
+    document.querySelectorAll('.sortable').forEach(h => {
+      h.removeAttribute('data-sort-order');
+    });
+
+    // Set sort order for the clicked header
     header.setAttribute('data-sort-order', newOrder);
     sortTable(header, newOrder);
   });
@@ -259,4 +266,9 @@ document.addEventListener('DOMContentLoaded', () => {
   fetchTeamProfiles();
   fetchStandings();
   fetchNews();
+
+  // Hide arrows by default
+  document.querySelectorAll('.sortable').forEach(header => {
+    header.removeAttribute('data-sort-order');
+  });
 });
