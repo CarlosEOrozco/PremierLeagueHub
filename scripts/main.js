@@ -79,6 +79,8 @@ function populateStandings(teams) {
       <td>${team.all.win}</td>
       <td>${team.all.draw}</td>
       <td>${team.all.lose}</td>
+      <td>${team.all.goals.for}</td>
+      <td>${team.all.goals.against}</td>
     </tr>
   `).join('');
 }
@@ -125,6 +127,36 @@ async function fetchTeamProfiles() {
     });
   }
 }
+
+// Sorting Function
+function sortTable(column, order) {
+  const rows = Array.from(standingsBody.querySelectorAll('tr'));
+  const columnIndex = Array.from(column.parentNode.children).indexOf(column);
+
+  rows.sort((a, b) => {
+    const cellA = a.children[columnIndex].textContent.trim();
+    const cellB = b.children[columnIndex].textContent.trim();
+
+    if (!isNaN(cellA) && !isNaN(cellB)) {
+      return order === 'asc' ? cellA - cellB : cellB - cellA;
+    } else {
+      return order === 'asc' ? cellA.localeCompare(cellB) : cellB.localeCompare(cellA);
+    }
+  });
+
+  standingsBody.innerHTML = '';
+  rows.forEach(row => standingsBody.appendChild(row));
+}
+
+// Event Listener for Sorting
+document.querySelectorAll('.sortable').forEach(header => {
+  header.addEventListener('click', () => {
+    const currentOrder = header.getAttribute('data-sort-order');
+    const newOrder = currentOrder === 'asc' ? 'desc' : 'asc';
+    header.setAttribute('data-sort-order', newOrder);
+    sortTable(header, newOrder);
+  });
+});
 
 // Weather Functions
 async function fetchWeather(stadium) {
