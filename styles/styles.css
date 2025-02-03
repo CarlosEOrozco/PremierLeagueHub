@@ -106,3 +106,26 @@ body {
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 20px;
   }
+
+  /* Add to styles.css */
+.sortable {
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .sortable:hover {
+    background-color: rgba(0, 31, 63, 0.1);
+  }
+  
+  .team-crest {
+    width: 25px;
+    height: 25px;
+    margin-right: 10px;
+  }
+  
+  .weather-card {
+    background: white;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  }
