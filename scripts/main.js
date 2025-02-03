@@ -70,19 +70,37 @@ async function fetchStandings() {
 }
 
 function populateStandings(teams) {
-  standingsBody.innerHTML = teams.map(team => `
-    <tr>
-      <td>${team.rank}</td>
-      <td><img src="${team.team.logo}" alt="${team.team.name}" class="team-crest"> ${team.team.name}</td>
-      <td>${team.points}</td>
-      <td>${team.all.played}</td>
-      <td>${team.all.win}</td>
-      <td>${team.all.draw}</td>
-      <td>${team.all.lose}</td>
-      <td>${team.all.goals.for}</td>
-      <td>${team.all.goals.against}</td>
-    </tr>
-  `).join('');
+  standingsBody.innerHTML = teams.map((team, index) => {
+    let status = '';
+    let rowClass = '';
+    
+    //Bootstrap color rows
+    if (index < 4) {
+      status = 'UCL';
+      rowClass = 'table-success';
+    } else if (index === 4) {
+      status = 'UEL';
+      rowClass = 'table-warning';
+    } else if (index >= teams.length - 3) {
+      status = 'REL';
+      rowClass = 'table-danger';
+    }
+
+    return `
+      <tr class="${rowClass}">
+        <td>${team.rank}</td>
+        <td><img src="${team.team.logo}" alt="${team.team.name}" class="team-crest"> ${team.team.name}</td>
+        <td>${team.points}</td>
+        <td>${team.all.played}</td>
+        <td>${team.all.win}</td>
+        <td>${team.all.draw}</td>
+        <td>${team.all.lose}</td>
+        <td>${team.all.goals.for}</td>
+        <td>${team.all.goals.against}</td>
+        <td>${status}</td>
+      </tr>
+    `;
+  }).join('');
 }
 
 async function fetchFeaturedMatches() {
