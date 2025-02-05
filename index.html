@@ -31,6 +31,14 @@
       </div>
     </section>
 
+    <!-- Weather Conditions -->
+    <section id="weather" class="mb-5">
+        <h2 class="text-center mb-4">Stadium Weather</h2>
+        <div class="row" id="weather-container">
+          <!-- Populated by JavaScript -->
+        </div>
+    </section>
+
     <!-- Team Profiles Section -->
     <section id="team-profiles">
       <h2>Team Profiles</h2>
@@ -49,6 +57,32 @@
       <div class="matches-results">
         <!-- Dynamically added -->
       </div>
+    </section>
+
+    <!-- Interactive Standing table -->
+    <section id="standings" class="mb-5">
+        <h2 class="text-center mb-4">League Standings Season 2023</h2>
+        <div class="table-responsive">
+          <table class="table table-striped" id="standings-table">
+            <thead>
+              <tr>
+                <th class="sortable" data-sort="position" data-sort-order="asc">Position</th>
+                <th class="sortable" data-sort="team" data-sort-order="asc">Team</th>
+                <th class="sortable" data-sort="points" data-sort-order="asc">Points</th>
+                <th class="sortable" data-sort="played" data-sort-order="asc">Played</th>
+                <th class="sortable" data-sort="win" data-sort-order="asc">Win</th>
+                <th class="sortable" data-sort="draw" data-sort-order="asc">Draw</th>
+                <th class="sortable" data-sort="lose" data-sort-order="asc">Lose</th>
+                <th class="sortable" data-sort="for" data-sort-order="asc">GF</th>
+                <th class="sortable" data-sort="against" data-sort-order="asc">GA</th>
+                <th class="sortable" data-sort="status" data-sort-order="asc">Status</th>
+              </tr>
+            </thead>
+            <tbody id="standings-body">
+              <!-- Populated by JavaScript -->
+            </tbody>
+          </table>
+        </div>
     </section>
 
     <!-- News Section -->
