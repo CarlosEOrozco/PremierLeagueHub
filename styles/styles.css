@@ -151,3 +151,64 @@ body {
     content: ' \25BC'; /* Down arrow */
     visibility: visible;
   }
+
+  /* Match Cards */
+
+.match-card {
+  background: #fff;
+  border: 1px solid #dee2e6;
+  border-radius: 0.5rem;
+  padding: 1rem;
+  transition: transform 0.2s;
+}
+
+.match-card:hover {
+  transform: translateY(-3px);
+}
+
+.team-logo {
+  width: 25px;
+  height: 25px;
+  margin-right: 10px;
+}
+
+.vs {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #6c757d;
+}
+
+.match-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.match-details {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #dee2e6;
+}
+
+.table-striped tbody tr:nth-of-type(odd) {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .team-logo {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .teams h5 {
+    font-size: 1rem;
+  }
+  
+  .vs {
+    font-size: 1.2rem;
+  }
+}

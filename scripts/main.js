@@ -15,6 +15,10 @@ const matchesResults = document.querySelector('.matches-results');
 const newsContainer = document.querySelector('.news-container');
 const standingsBody = document.getElementById('standings-body');
 const weatherContainer = document.getElementById('weather-container');
+const roundsContainer = document.getElementById('rounds-container');
+
+
+
 
 // Generic API Fetch Function
 async function fetchAPIData(endpoint, params = {}) {
@@ -260,12 +264,108 @@ function showErrorMessage() {
   document.querySelector('main').prepend(errorDiv);
 }
 
+//Rounds Function
+// Fetch Available Rounds
+async function fetchRounds() {
+  try {
+    const data = await fetchAPIData('fixtures/rounds', {
+      league: 39,
+      season: CURRENT_SEASON,
+      current: 'false' // Set to 'true' to get only the current round
+    });
+
+    if (data && data.length) {
+      populateRounds(data);
+    } else {
+      throw new Error('No rounds data available');
+    }
+  } catch (error) {
+    console.error('Error fetching rounds:', error);
+    showErrorMessage();
+  }
+}
+
+// Populate Rounds Selector
+function populateRounds(rounds) {
+  roundsContainer.innerHTML = `
+    <div class="mb-4">
+      <label class="form-label">Select Round:</label>
+      <select id="round-select" class="form-select">
+        ${rounds.map(round => `<option value="${round}">${round}</option>`).join('')}
+      </select>
+    </div>
+  `;
+
+  // Add event listener for round selection
+  document.getElementById('round-select').addEventListener('change', (e) => {
+    fetchMatchesByRound(e.target.value);
+  });
+}
+
+// Fetch Matches for Specific Round
+async function fetchMatchesByRound(round) {
+  try {
+    const data = await fetchAPIData('fixtures', {
+      league: 39,
+      season: CURRENT_SEASON,
+      round: round
+    });
+
+    if (data) {
+      populateMatches(data);
+    } else {
+      throw new Error('No matches data available for the selected round');
+    }
+  } catch (error) {
+    console.error('Error fetching matches:', error);
+    showErrorMessage();
+  }
+}
+
+// Populate Matches
+function populateMatches(fixtures) {
+  const matchesHTML = fixtures.map(match => {
+    const homeScore = match.goals.home !== null ? match.goals.home : '-';
+    const awayScore = match.goals.away !== null ? match.goals.away : '-';
+
+    return `
+      <tr>
+        <td>${new Date(match.fixture.date).toLocaleDateString()}</td>
+        <td><img src="${match.teams.home.logo}" alt="${match.teams.home.name}" class="team-logo"> ${match.teams.home.name}</td>
+        <td>${homeScore} - ${awayScore}</td>
+        <td><img src="${match.teams.away.logo}" alt="${match.teams.away.name}" class="team-logo"> ${match.teams.away.name}</td>
+        <td>${match.fixture.venue.name}</td>
+        <td><span class="badge bg-primary">${match.fixture.status.short}</span></td>
+      </tr>
+    `;
+  }).join('');
+
+  matchesContainer.innerHTML = `
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Home Team</th>
+          <th>Score</th>
+          <th>Away Team</th>
+          <th>Venue</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${matchesHTML}
+      </tbody>
+    </table>
+  `;
+}
+
 // Initialize Functions
 document.addEventListener('DOMContentLoaded', () => {
   fetchFeaturedMatches();
   fetchTeamProfiles();
   fetchStandings();
   fetchNews();
+  fetchRounds(); // Fetch rounds on page load
 
   // Hide arrows by default
   document.querySelectorAll('.sortable').forEach(header => {
