@@ -1,7 +1,7 @@
 // API Configuration
-const FOOTBALL_API_KEY = '137238e0d9fd9e50035c63ec4c3db5e2'; // Replace with your API key
+const FOOTBALL_API_KEY = '137238e0d9fd9e50035c63ec4c3db5e2'; 
 const FOOTBALL_API_HOST = 'v3.football.api-sports.io';
-const NEWS_API_KEY = '8ed614c0b3b18fa34a158ef3424a9676'; // Replace with NewsAPI key
+const NEWS_API_KEY = '8ed614c0b3b18fa34a158ef3424a9676'; 
 
 //Const for the API endpoints
 const CURRENT_SEASON = 2023;
@@ -110,27 +110,6 @@ function displayWeather(stadium) {
     `;
     weatherContainer.appendChild(weatherCard);
   });
-}
-
-// News Functions
-async function fetchNews() {
-  const response = await fetch(
-    `https://newsapi.org/v2/everything?q=premier+league&apiKey=${NEWS_API_KEY}`
-  );
-  const data = await response.json();
-  populateNews(data.articles);
-}
-
-function populateNews(articles) {
-  newsContainer.innerHTML = articles.slice(0, 4).map(article => `
-    <div class="col-md-6 mb-4">
-      <div class="news-card">
-        <h3>${article.title}</h3>
-        <p>${article.description}</p>
-        <a href="${article.url}" target="_blank" class="btn btn-primary">Read More</a>
-      </div>
-    </div>
-  `).join('');
 }
 
 // Search Handler
@@ -263,7 +242,6 @@ function populateMatches(fixtures) {
 document.addEventListener('DOMContentLoaded', () => {
   fetchFeaturedMatches();
   fetchTeamProfiles();
-  fetchNews();
   fetchRounds(); // Fetch rounds on page load
 
   // Hide arrows by default
