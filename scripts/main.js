@@ -13,7 +13,6 @@ const matchSearchForm = document.getElementById('match-search-form');
 const searchInput = document.getElementById('search-input');
 const matchesResults = document.querySelector('.matches-results');
 const newsContainer = document.querySelector('.news-container');
-const standingsBody = document.getElementById('standings-body');
 const weatherContainer = document.getElementById('weather-container');
 const roundsContainer = document.getElementById('rounds-container');
 
@@ -45,65 +44,6 @@ async function fetchAPIData(endpoint, params = {}) {
 }
 
 // Football Data Functions
-async function fetchStandings() {
-    try {
-      const data = await fetchAPIData('standings', {
-        league: 39,
-        season: CURRENT_SEASON 
-      });
-
-      if (!data || !data.length) {
-        throw new Error('No standings data available for 2023');
-      }
-
-      // Add null checks with optional chaining
-      const standings = data[0]?.league?.standings?.[0];
-
-      if (!standings) {
-        throw new Error('2023 standings data format is incorrect');
-      }
-
-      populateStandings(standings);
-    } catch (error) {
-      console.error('Error fetching 2023 standings:', error);
-      showErrorMessage();
-    }
-}
-
-function populateStandings(teams) {
-  standingsBody.innerHTML = teams.map((team, index) => {
-    let status = '';
-    let rowClass = '';
-    
-    //Bootstrap color rows
-    if (index < 4) {
-      status = 'UCL';
-      rowClass = 'table-success';
-    } else if (index === 4) {
-      status = 'UEL';
-      rowClass = 'table-warning';
-    } else if (index >= teams.length - 3) {
-      status = 'REL';
-      rowClass = 'table-danger';
-    }
-
-    return `
-      <tr class="${rowClass}">
-        <td>${team.rank}</td>
-        <td><img src="${team.team.logo}" alt="${team.team.name}" class="team-crest"> ${team.team.name}</td>
-        <td>${team.points}</td>
-        <td>${team.all.played}</td>
-        <td>${team.all.win}</td>
-        <td>${team.all.draw}</td>
-        <td>${team.all.lose}</td>
-        <td>${team.all.goals.for}</td>
-        <td>${team.all.goals.against}</td>
-        <td>${status}</td>
-      </tr>
-    `;
-  }).join('');
-}
-
 async function fetchFeaturedMatches() {
   const data = await fetchAPIData('fixtures', {
     league: 39,
@@ -146,43 +86,6 @@ async function fetchTeamProfiles() {
     });
   }
 }
-
-// Sorting Function
-function sortTable(column, order) {
-  const rows = Array.from(standingsBody.querySelectorAll('tr'));
-  const columnIndex = Array.from(column.parentNode.children).indexOf(column);
-
-  rows.sort((a, b) => {
-    const cellA = a.children[columnIndex].textContent.trim();
-    const cellB = b.children[columnIndex].textContent.trim();
-
-    if (!isNaN(cellA) && !isNaN(cellB)) {
-      return order === 'asc' ? cellA - cellB : cellB - cellA;
-    } else {
-      return order === 'asc' ? cellA.localeCompare(cellB) : cellB.localeCompare(cellA);
-    }
-  });
-
-  standingsBody.innerHTML = '';
-  rows.forEach(row => standingsBody.appendChild(row));
-}
-
-// Event Listener for Sorting
-document.querySelectorAll('.sortable').forEach(header => {
-  header.addEventListener('click', () => {
-    const currentOrder = header.getAttribute('data-sort-order');
-    const newOrder = currentOrder === 'asc' ? 'desc' : 'asc';
-
-    // Clear sort order from all headers
-    document.querySelectorAll('.sortable').forEach(h => {
-      h.removeAttribute('data-sort-order');
-    });
-
-    // Set sort order for the clicked header
-    header.setAttribute('data-sort-order', newOrder);
-    sortTable(header, newOrder);
-  });
-});
 
 // Weather Functions
 async function fetchWeather(stadium) {
@@ -360,7 +263,6 @@ function populateMatches(fixtures) {
 document.addEventListener('DOMContentLoaded', () => {
   fetchFeaturedMatches();
   fetchTeamProfiles();
-  fetchStandings();
   fetchNews();
   fetchRounds(); // Fetch rounds on page load
 
