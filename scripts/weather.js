@@ -1,3 +1,5 @@
+import { setCache, getCache } from './cache.js';
+
 const OPENWEATHER_API_KEY = '8ed614c0b3b18fa34a158ef3424a9676'; // Replace with your OpenWeather API key
 
 // List of states in England with their coordinates
@@ -16,6 +18,12 @@ const states = [
 
 // Fetch Weather Data
 async function fetchWeatherData(lat, lon) {
+  const cacheKey = `weather_${lat}_${lon}`;
+  const cachedData = getCache(cacheKey);
+  if (cachedData) {
+    return cachedData;
+  }
+
   const url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&appid=${OPENWEATHER_API_KEY}`;
 
   try {
@@ -23,6 +31,7 @@ async function fetchWeatherData(lat, lon) {
     if (!response.ok) throw new Error('Weather API request failed');
     
     const data = await response.json();
+    setCache(cacheKey, data, 60 * 60 * 1000); // Cache for 1 hour
     return data;
   } catch (error) {
     console.error('Weather API Error:', error);

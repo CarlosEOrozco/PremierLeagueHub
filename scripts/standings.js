@@ -1,12 +1,20 @@
+import { setCache, getCache } from './cache.js';
+
 const FOOTBALL_API_KEY = '137238e0d9fd9e50035c63ec4c3db5e2'; // Replace with your API key
 const FOOTBALL_API_HOST = 'v3.football.api-sports.io';
 const CURRENT_SEASON = 2023;
+const CACHE_TTL = 60 * 60 * 1000; // 1 hour
 
 // DOM Elements
 const standingsBody = document.getElementById('standings-body');
 
-// Generic API Fetch Function
-async function fetchAPIData(endpoint, params = {}) {
+// Generic API Fetch Function with Cache
+async function fetchAPIData(endpoint, params = {}, cacheKey) {
+  const cachedData = getCache(cacheKey);
+  if (cachedData) {
+    return cachedData;
+  }
+
   const url = new URL(`https://${FOOTBALL_API_HOST}/${endpoint}`);
   url.search = new URLSearchParams(params).toString();
 
@@ -23,6 +31,7 @@ async function fetchAPIData(endpoint, params = {}) {
     const data = await response.json();
     if(data.errors.length > 0) throw new Error(data.errors.join(', '));
     
+    setCache(cacheKey, data.response, CACHE_TTL);
     return data.response;
 
   } catch (error) {
@@ -38,7 +47,7 @@ async function fetchStandings() {
       const data = await fetchAPIData('standings', {
         league: 39,
         season: CURRENT_SEASON 
-      });
+      }, 'standings');
 
       if (!data || !data.length) {
         throw new Error('No standings data available for 2023');

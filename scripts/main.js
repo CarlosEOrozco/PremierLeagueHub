@@ -1,3 +1,5 @@
+import { setCache, getCache } from './cache.js';
+
 // API Configuration
 const FOOTBALL_API_KEY = '137238e0d9fd9e50035c63ec4c3db5e2'; 
 const FOOTBALL_API_HOST = 'v3.football.api-sports.io';
@@ -5,6 +7,7 @@ const NEWS_API_KEY = '8ed614c0b3b18fa34a158ef3424a9676';
 
 //Const for the API endpoints
 const CURRENT_SEASON = 2023;
+const CACHE_TTL = 60 * 60 * 1000; // 1 hour
 
 // DOM Elements
 const matchesContainer = document.querySelector('.matches-container');
@@ -16,8 +19,13 @@ const newsContainer = document.querySelector('.news-container');
 const weatherContainer = document.getElementById('weather-container');
 const roundsContainer = document.getElementById('rounds-container');
 
-// Generic API Fetch Function
-async function fetchAPIData(endpoint, params = {}) {
+// Generic API Fetch Function with Cache
+async function fetchAPIData(endpoint, params = {}, cacheKey) {
+  const cachedData = getCache(cacheKey);
+  if (cachedData) {
+    return cachedData;
+  }
+
   const url = new URL(`https://${FOOTBALL_API_HOST}/${endpoint}`);
   url.search = new URLSearchParams(params).toString();
 
@@ -34,6 +42,7 @@ async function fetchAPIData(endpoint, params = {}) {
     const data = await response.json();
     if(data.errors.length > 0) throw new Error(data.errors.join(', '));
     
+    setCache(cacheKey, data.response, CACHE_TTL);
     return data.response;
 
   } catch (error) {
@@ -49,7 +58,7 @@ async function fetchFeaturedMatches() {
     league: 39,
     season: new Date().getFullYear(),
     next: 10 // Get next 10 matches
-  });
+  }, 'featuredMatches');
 
   if(data) {
     data.forEach(match => {
@@ -70,7 +79,7 @@ async function fetchTeamProfiles() {
   const data = await fetchAPIData('teams', {
     league: 39,
     season: new Date().getFullYear()
-  });
+  }, 'teamProfiles');
 
   if(data) {
     data.forEach(team => {
@@ -122,7 +131,7 @@ matchSearchForm.addEventListener('submit', async (e) => {
       league: 39,
       season: new Date().getFullYear(),
       search: searchTerm
-    });
+    }, `search_${searchTerm}`);
     
     if(data) {
       matchesResults.innerHTML = data.map(match => `
@@ -151,7 +160,7 @@ async function fetchRounds() {
       league: 39,
       season: CURRENT_SEASON,
       current: 'false' // Set to 'true' to get only the current round
-    });
+    }, 'rounds');
 
     if (data && data.length) {
       populateRounds(data);
@@ -188,7 +197,7 @@ async function fetchMatchesByRound(round) {
       league: 39,
       season: CURRENT_SEASON,
       round: round
-    });
+    }, `matches_${round}`);
 
     if (data) {
       populateMatches(data);
