@@ -15,12 +15,21 @@ const teamsContainer = document.querySelector('.teams-container');
 const matchSearchForm = document.getElementById('match-search-form');
 const searchInput = document.getElementById('search-input');
 const matchesResults = document.querySelector('.matches-results');
-const newsContainer = document.querySelector('.news-container');
 const weatherContainer = document.getElementById('weather-container');
 const roundsContainer = document.getElementById('rounds-container');
 const matchesHeading = document.getElementById('matches-heading');
 
 // Generic API Fetch Function with Cache
+/**
+ * Fetches data from the specified API endpoint with optional parameters and caching.
+ *
+ * @param {string} endpoint - The API endpoint to fetch data from.
+ * @param {Object} [params={}] - An optional object containing query parameters for the API request.
+ * @param {string} cacheKey - The key used to store and retrieve cached data.
+ * @returns {Promise<Object|null>} - A promise that resolves to the API response data or null if an error occurs.
+ *
+ * @throws {Error} - Throws an error if the API request fails or if the response contains errors.
+ */
 async function fetchAPIData(endpoint, params = {}, cacheKey) {
   const cachedData = getCache(cacheKey);
   if (cachedData) {
